@@ -16,8 +16,10 @@ export default class VolumeScrollerExtensionPreferences extends ExtensionPrefere
     // Create the preference rows
     const granularityRow = new Adw.ActionRow({ title: 'Granularity' });
     const invertScrollRow = new Adw.ActionRow({ title: 'Invert Scroll' });
+    const quickSettingsAreaRow = new Adw.ActionRow({ title: 'Quick Settings Area' });
     group.add(granularityRow);
     group.add(invertScrollRow);
+    group.add(quickSettingsAreaRow);
 
     // Create the value picker
     const granularityEntry = new Gtk.SpinButton({
@@ -30,6 +32,13 @@ export default class VolumeScrollerExtensionPreferences extends ExtensionPrefere
     // Create the direction switch
     const invertScrollSwitch = new Gtk.Switch({
       active: window._settings.get_boolean('invert-scroll'),
+      valign: Gtk.Align.CENTER,
+      halign: Gtk.Align.CENTER,
+    });
+
+    // Create the area switch
+    const quickSettingsAreaSwitch = new Gtk.Switch({
+      active: window._settings.get_boolean('quick-settings-area'),
       valign: Gtk.Align.CENTER,
       halign: Gtk.Align.CENTER,
     });
@@ -49,6 +58,13 @@ export default class VolumeScrollerExtensionPreferences extends ExtensionPrefere
       Gio.SettingsBindFlags.DEFAULT
     );
 
+    window._settings.bind(
+      'quick-settings-area',
+      quickSettingsAreaSwitch,
+      'active',
+      Gio.SettingsBindFlags.DEFAULT
+    );
+
     // Add the granularity value picker to the row
     granularityRow.add_suffix(granularityEntry);
     granularityRow.activatable_widget = granularityEntry;
@@ -56,6 +72,10 @@ export default class VolumeScrollerExtensionPreferences extends ExtensionPrefere
     // Add the direction switch to the row
     invertScrollRow.add_suffix(invertScrollSwitch);
     invertScrollRow.activatable_widget = invertScrollSwitch;
+
+    // Add the area switch to the row
+    quickSettingsAreaRow.add_suffix(quickSettingsAreaSwitch);
+    quickSettingsAreaRow.activatable_widget = quickSettingsAreaSwitch;
 
     // Add our page to the window
     window.add(page);

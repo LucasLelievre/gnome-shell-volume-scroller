@@ -22,6 +22,18 @@ export default class VolumeScrollerExtension extends Extension {
       this.direction = this.settings.get_boolean("invert-scroll");
     }
 
+    const setScrollArea = () => {
+      var quickSettingsArea = this.settings.get_boolean("quick-settings-area");
+
+      this.panel.disconnect(this.scroll_binding);
+      if (quickSettingsArea == true) {
+        this.panel = Main.panel.statusArea.quickSettings;
+      } else {
+        this.panel = Main.panel;
+      }
+      this._setBindings();
+    }
+
     this.controller = Volume.getMixerControl();
     this.panel = Main.panel;
 
@@ -31,24 +43,20 @@ export default class VolumeScrollerExtension extends Extension {
     this.volume_max = this.controller.get_vol_max_norm();
     setGranularity();
     setDirection();
+    setScrollArea();
 
     this.scroll_binding = null;
     this.sink_binding = null;
+    this.click_binding = null;
 
     this.settings.connect("changed::granularity", setGranularity);
     this.settings.connect("changed::invert-scroll", setDirection);
+    this.settings.connect("changed::quick-settings-area", setScrollArea);
 
     this.enabled = true;
     this.sink = this.controller.get_default_sink();
 
-    this.scroll_binding = this.panel.connect(
-      "scroll-event",
-      this._handle_scroll.bind(this)
-    );
-    this.sink_binding = this.controller.connect(
-      "default-sink-changed",
-      this._handle_sink_change.bind(this)
-    );
+    this._setBindings();
   }
 
   disable() {
@@ -63,6 +71,17 @@ export default class VolumeScrollerExtension extends Extension {
     this.controller.disconnect(this.sink_binding);
     this.sink_binding = null;
     this.controller = null;
+  }
+
+  _setBindings() {
+    this.scroll_binding = this.panel.connect(
+      "scroll-event",
+      this._handle_scroll.bind(this)
+    );
+    this.sink_binding = this.controller.connect(
+      "default-sink-changed",
+      this._handle_sink_change.bind(this)
+    );
   }
 
   _handle_scroll(_actor, event) {

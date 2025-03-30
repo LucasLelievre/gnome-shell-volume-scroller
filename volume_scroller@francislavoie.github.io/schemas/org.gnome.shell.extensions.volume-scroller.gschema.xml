@@ -12,5 +12,10 @@
       <summary>Invert Direction</summary>
       <description>Scrolling up decreases the volume, scrolling down increases it.</description>
     </key>
+    <key name="quick-settings-area" type="b">
+      <default>false</default>
+      <summary>Quick Settings Area</summary>
+      <description>Restricts the scrolling area to the quick settings button</description>
+    </key>
   </schema>
 </schemalist>
